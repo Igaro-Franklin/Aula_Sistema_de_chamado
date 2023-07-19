@@ -87,7 +87,7 @@ export default function New(){
             setCustomersSelected(0)
         })
         .catch((error) =>{
-            toast.error("Algo deu errado ao registrar, tente novamente.")
+            toast.error("Algo deu errado ao tentar registrar, tente novamente.")
             console.log(error);
 
         })
