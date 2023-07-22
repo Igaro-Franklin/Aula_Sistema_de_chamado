@@ -9,6 +9,7 @@ import { format } from "date-fns"
 
 import Header  from '../../components/Header'
 import Title from '../../components/Title'
+import Modal from "../../components/Modal"
 
 const listRef = collection(db, "chamados")
 
@@ -19,8 +20,11 @@ export default function Dashboard(){
     const [loading, setLoading] = useState(true);
 
     const [isEmpty, setIsEmpty] = useState(false);
-    const [ lastDocs, setLastDocs ] = useState();
+    const [lastDocs, setLastDocs] = useState();
     const [loadingMore, setLoadingMore] = useState(false);
+
+    const [showPostModal, setShowPostModal] = useState(false);
+    const [detail, setDetail] = useState()
 
 
     useEffect ( () => {
@@ -77,6 +81,11 @@ export default function Dashboard(){
         const q = query(listRef, orderBy('created', 'desc'), startAfter(lastDocs), limit(5));
         const querySnapshot = await getDocs(q);
         await updateState(querySnapshot); 
+    }
+
+    function toggleModal(item){
+        setShowPostModal(!showPostModal);
+        setDetail(item);
     }
 
     if(loading){
@@ -144,12 +153,12 @@ export default function Dashboard(){
                                             </td>
                                             <td data-label='Cadastrado'>{item.createdFormat}</td>
                                             <td data-label='#'>
-                                                <button className="action" style={ {backgroundColor:"#3588f6"} }>
+                                                <button onClick={ () => toggleModal(item)} className="action" style={ {backgroundColor:"#3588f6"}}>
                                                     <FiSearch  color="#fff" size={17} />
                                                 </button>
-                                                <button className="action"  size={17} style={ {backgroundColor:"#f6a935"} } >
+                                                <Link to={`/new/${item.id}`} className="action"  size={17} style={ {backgroundColor:"#f6a935"} } >
                                                     <FiEdit2  color="#fff"/>
-                                                </button>
+                                                </Link>
                                             </td>
                                         </tr>
                                     )
@@ -165,6 +174,12 @@ export default function Dashboard(){
                     
                 </>
             </div>
+            {showPostModal && (
+                <Modal
+                    conteudo={detail}
+                    close={ () => setShowPostModal(!showPostModal)}
+                />
+            )}
         </div>
     )
 }
